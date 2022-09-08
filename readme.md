@@ -23,3 +23,5 @@ I'm also open to using other proof assistants *in combination with* Agda for the
 
 If you're familiar with my work or you've listened to the interviews linked above, you'll know that I prefer denotational to operational perspectives.
 I am eager, however, to compare the two styles honestly and substantively; so I'm quite interested in side-by-side comparisons on that dimension as well, with shared specification and evaluation criteria.
+
+You can find my email address on my [home page](http://conal.net).
