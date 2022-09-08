@@ -9,7 +9,7 @@ With such a specification, we would look for efficient implementations and tract
 
 I personally believe these values are necessary for doing work of lasting scientific value (as opposed to merely short-term commercial value) and for moving our technological society off its rickety foundations onto solid ground.
 
-I discussed my values and why they matter to me in two recent (and rather long) interviews:
+I discussed my values and why they matter to me in two (rather long) interviews:
 
 *   [The Lost Elegance of Computation](https://www.typetheoryforall.com/2022/05/09/17-The-Lost-Elegance-of-Computation-(Conal-Elliott).html#1fe23b61)
 *   [Denotational Design](https://www.typetheoryforall.com/2022/08/04/21-Conal-Eliott-2.html#1bc84a4c)
