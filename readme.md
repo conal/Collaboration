@@ -1,4 +1,4 @@
-I am seeking research collaborators and mentees in the general area of correct engineering with simple, precise specifications.
+I am seeking research collaborators and mentees in the general area of correct and efficient engineering with *simple* and precise specifications.
 To keep us honest, we'd formalize our questions and answers in one or more proof assistants (my favorite being Agda), eliminating guesswork, subjectivity, and false assumptions.
 (As Richard Feynman put it, "The first principle is that you must not fool yourself, and you are the easiest person to fool."
 Bertrand Russell made the point even more specifically: "Everything is vague to a degree you do not realize till you have tried to make it precise.")
