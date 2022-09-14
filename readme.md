@@ -19,6 +19,7 @@ Before that (working in Haskell), I found myself repeatedly reminding mentees of
 Eventually it dawned on me that dependent types could capture these criteria precisely and remind the mentees whenever they strayed.
 A modern dependently typed language seems the best foundation for proof assistants, thanks to embodying the profound Curry-Howard-Lambek correspondence.
 Agda is my favorite dependently typed language / proof assistant, so it's where I now do all of my work, including generation of efficient parallel computational hardware with formal correctness proofs.
+To help you get started, I've collected some suggestions about [Learning Agda](learning-agda.md).
 I'm also open to using other proof assistants *in combination with* Agda for the sake of comparison.
 
 If you're familiar with my work or you've listened to the interviews linked above, you'll know that I prefer denotational to operational perspectives.
