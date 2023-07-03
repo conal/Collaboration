@@ -16,6 +16,9 @@ I discussed my values and why they matter to me in two (rather long) interviews:
 *   [The Lost Elegance of Computation](https://www.typetheoryforall.com/2022/05/09/17-The-Lost-Elegance-of-Computation-(Conal-Elliott).html#1fe23b61)
 *   [Denotational Design](https://www.typetheoryforall.com/2022/08/04/21-Conal-Eliott-2.html#1bc84a4c)
 
+See also my ZuriHac 2023 talk [A Galilean revolution for computing:
+Unboundedly scalable reliability and efficiency](https://github.com/conal/talk-2023-galilean-revolution).
+
 It took some experience mentoring people to realize the importance of asking them to work with a proof assistant.
 Before that (working in Haskell), I found myself repeatedly reminding mentees of the success/correctness criteria, and I didn't enjoy the role.
 Eventually it dawned on me that dependent types could capture these criteria precisely and remind the mentees whenever they strayed.
