@@ -35,7 +35,7 @@ For mentoring, a typical getting started path looks something like the following
 *   Install Agda.
 *   Read some of the Agda resources I recommended, and work through the exercises you find.
     You may ask me questions along the way.
-*   Send me a progress update every two weeks, even if it's short, so I know that you're still in the game.
+*   Send me a progress update every two weeks (preferably in Markdown format), even if it's short, so I know that you're still in the game.
 *   When I see that you're getting some basic Agda skills down, I will start feeding you exercises from the book I am writing.
 *   When you get the hang of compositionally correct computing, we can start digging into topics of particular interest to you, aiming at doing and sharing some original research.
 
