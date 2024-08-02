@@ -6,7 +6,7 @@ To keep us honest, we'd formalize our questions and answers in one or more proof
 Bertrand Russell made the point even more specifically: "Everything is vague to a degree you do not realize till you have tried to make it precise.")
 
 With this commitment to (and support for) truth in place, we would then look for the simplest (and thus most valuable) possible specifications for problems of interest.
-(Simplicity of specifications is not only important for ease of use but also crucial to reliability, since the specification/question is the one aspect of the work that cannot be formally verified.)
+(Simplicity of specifications is important not only for ease of use but also crucial to reliability, since the specification/question is the one aspect of the work that cannot be formally verified.)
 With such a specification, we would look for efficient implementations and tractable (and thus affordable) proofs (demonstrations of correctness).
 
 I personally believe these values are necessary for doing work of lasting scientific value (as opposed to merely short-term commercial value) and for moving our technological society off its rickety foundations onto solid ground.
@@ -23,7 +23,7 @@ It took some experience mentoring people to realize the importance of asking the
 Before that (working in Haskell), I found myself repeatedly reminding mentees of the success/correctness criteria, and I didn't enjoy the role.
 Eventually it dawned on me that dependent types could capture these criteria precisely and remind the mentees whenever they strayed.
 A modern dependently typed language seems the best foundation for proof assistants, thanks to embodying the profound Curry-Howard-Lambek correspondence.
-Agda is my favorite dependently typed language / proof assistant, so it's where I now do all of my work, including generation of efficient parallel computational hardware with formal correctness proofs.
+Agda is my favorite dependently typed language / proof assistant, so it's where I now do all of my work, including generation of efficient parallel computational hardware with formal correctness proofs (and simple specifications).
 To help you get started, I've collected some suggestions about [Learning Agda](learning-agda.md).
 I'm also open to using other proof assistants *in combination with* Agda for the sake of comparison.
 
@@ -35,7 +35,7 @@ For mentoring, a typical getting started path looks something like the following
 *   Install Agda.
 *   Read some of the Agda resources I recommended, and work through the exercises you find.
     You may ask me questions along the way.
-*   Send me a progress update every two weeks (preferably in Markdown format), even if it's short, so I know that you're still in the game.
+*   Send me a progress update every two weeks (preferably in Markdown format without section headings), even if it's short, so I know that you're still in the game.
 *   When I see that you're getting some basic Agda skills down, I will start feeding you exercises from the book I am writing.
 *   When you get the hang of compositionally correct computing, we can start digging into topics of particular interest to you, aiming at doing and sharing some original research.
 
