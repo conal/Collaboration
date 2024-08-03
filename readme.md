@@ -13,8 +13,8 @@ I personally believe these values are necessary for doing work of lasting scient
 
 I discussed my values and why they matter to me in two (rather long) interviews:
 
-*   [The Lost Elegance of Computation](https://www.typetheoryforall.com/2022/05/09/17-The-Lost-Elegance-of-Computation-(Conal-Elliott).html#1fe23b61)
-*   [Denotational Design](https://www.typetheoryforall.com/2022/08/04/21-Conal-Eliott-2.html#1bc84a4c)
+*   [The Lost Elegance of Computation](https://www.typetheoryforall.com/episodes/the-lost-elegance-of-computation)
+*   [Denotational Design](https://www.typetheoryforall.com/episodes/denotational-design)
 
 See also my ZuriHac 2023 talk, [A Galilean revolution for computing:
 Unboundedly scalable reliability and efficiency](https://github.com/conal/talk-2023-galilean-revolution).
