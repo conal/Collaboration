@@ -2,7 +2,8 @@
 
 Some resources:
 
-*   [*Programming and Proving in Agda*](https://github.com/jespercockx/agda-lecture-notes/blob/master/agda.pdf) by Jesper Cockx.
+*   [*Programming and Proving in Agda*](https://www.youtube.com/watch?v=AVRsH_YH7XU): ZuriHac 2024 talk by Jesper Cockx.
+*   [*Programming and Proving in Agda*](https://github.com/jespercockx/agda-lecture-notes/blob/master/agda.pdf): lecture notes by Jesper Cockx.
 *   "Propositions as Types" by Philip Wadler.
     This [talk](https://www.youtube.com/watch?v=IOiZatlZtGU) and [paper](https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf) present the deep connection (equivalence/isomorphism) between logic and dependently typed programming, often called "the [Curry–Howard correspondence](https://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence)", as discovered and developed during the 20th century.
     I consider the fundamental equivalence of computation and constructive logic to be the most powerful and beautiful insight in computer science.
