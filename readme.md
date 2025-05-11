@@ -18,7 +18,7 @@ I discussed my values and why they matter to me in three interviews:
 *   [Haskell Interlude](https://haskell.foundation/podcast/62/) (0:58)
 
 See also my ZuriHac 2023 talk, [A Galilean revolution for computing:
-Unboundedly scalable reliability and efficiency](https://github.com/conal/talk-2023-galilean-revolution).
+Unboundedly scalable reliability and efficiency](https://github.com/conal/talk-2023-galilean-revolution) (1:27).
 
 It took some experience mentoring people to realize the importance of asking them to work with a proof assistant.
 Before that (working in Haskell), I found myself repeatedly reminding mentees of the success/correctness criteria, and I didn't enjoy the role.
