@@ -11,10 +11,11 @@ With such a specification, we would look for efficient implementations and tract
 
 I personally believe these values are necessary for doing work of lasting scientific value (as opposed to merely short-term commercial value) and for moving our technological society off its rickety foundations onto solid ground.
 
-I discussed my values and why they matter to me in two (rather long) interviews:
+I discussed my values and why they matter to me in three interviews:
 
-*   [The Lost Elegance of Computation](https://www.typetheoryforall.com/episodes/the-lost-elegance-of-computation)
-*   [Denotational Design](https://www.typetheoryforall.com/episodes/denotational-design)
+*   [The Lost Elegance of Computation](https://www.typetheoryforall.com/episodes/the-lost-elegance-of-computation) (3:32)
+*   [Denotational Design](https://www.typetheoryforall.com/episodes/denotational-design) (3:07)
+*   [Haskell Interlude](https://haskell.foundation/podcast/62/) (0:58)
 
 See also my ZuriHac 2023 talk, [A Galilean revolution for computing:
 Unboundedly scalable reliability and efficiency](https://github.com/conal/talk-2023-galilean-revolution).
