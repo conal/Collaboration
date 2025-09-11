@@ -37,7 +37,8 @@ For mentoring, a typical getting started path looks something like the following
 *   Read some of the Agda resources I recommended, and work through the exercises you find.
     You may ask me questions along the way.
 *   Send me a progress update every two weeks (preferably in Markdown format without section headings), even if it's short, so I know that you're still in the game.
-*   When I see that you're getting some basic Agda skills down, I will start feeding you exercises from the book I am writing.
-*   When you get the hang of compositionally correct computing, we can start digging into topics of particular interest to you, aiming at doing and sharing some original research.
+*   Assemble a list of topics that interest you, and start investigating, emphasizing simple and precise specifications.
+    (A topic can even start with some code you've read or written.)
+    I'll ask clarifying questions and make a few suggestions (hopefully not too intrusively), and we'll iterate from there.
 
 You can find my email address near the bottom of my [home page](http://conal.net).
