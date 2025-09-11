@@ -37,6 +37,7 @@ For mentoring, a typical getting started path looks something like the following
 *   Read some of the Agda resources I recommended, and work through the exercises you find.
     You may ask me questions along the way.
 *   Send me a progress update every two weeks (preferably in Markdown format without section headings), even if it's short, so I know that you're still in the game.
+    It helps my journal-centric workflow if we both write in [Markdown](https://en.wikipedia.org/wiki/Markdown) format with pretty links, without section headings, and with blank lines before lists and enumerations.
 *   Assemble a list of topics that interest you, and start investigating, emphasizing simple and precise specifications.
     (A topic can even start with some code you've read or written.)
     I'll ask clarifying questions and make a few suggestions (hopefully not too intrusively), and we'll iterate from there.
