@@ -41,5 +41,6 @@ For mentoring, a typical getting started path looks something like the following
 *   Assemble a list of topics that interest you, and start investigating, emphasizing simple and precise specifications.
     (A topic can even start with some code you've read or written.)
     I'll ask clarifying questions and make a few suggestions (hopefully not too intrusively), and we'll iterate from there.
+*   If anything in the process isn't working for you, please say so, and we'll adapt to suit us both.
 
 You can find my email address near the bottom of my [home page](http://conal.net).
