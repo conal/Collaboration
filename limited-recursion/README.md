@@ -3,13 +3,6 @@
 A denotational specification of Telomare's semantics in Agda, following
 Conal Elliott's **Denotational Design** and **Type Class Morphisms** methodology.
 
-## Quick start
-
-```bash
-agda --compile telomare.agda   # compile (only needed after changes)
-./telomare                     # run
-```
-
 ---
 
 ## The central idea
@@ -80,7 +73,7 @@ None of these were invented — they were *calculated* from the model.
 The equation `⟦f a⟧ = f' ⟦a⟧` shows up in three places, at different levels
 of explicitness:
 
-**§2 (lines 47–56) — implicitly, through derivation.**
+**§2 — implicitly, through derivation.**
 `return-tel` and `bind-tel` are the unique solutions to the homomorphism
 equations for the `Monad` structure.  The requirement is:
 
@@ -92,7 +85,7 @@ equations for the `Monad` structure.  The requirement is:
 Solving for what `return` and `>>=` must be on `TelM` forces exactly the
 definitions written.  Any other definition would violate the equation.
 
-**§3 (line 77) — explicitly in the type denotation.**
+**§3 — explicitly in the type denotation.**
 
 ```agda
 ⟦ A ⇒ B ⟧T = ⟦ A ⟧T → TelM ⟦ B ⟧T
@@ -108,37 +101,35 @@ Writing `⟦ A ⇒ B ⟧T = ⟦A⟧T → ⟦B⟧T` (a plain function) would viol
 homomorphism — function application would not commute with `⟦·⟧` because tel
 consumption would be lost.
 
-**§8 (lines 206–217) — explicitly proved as Agda propositions.**
+**§8 — explicitly proved as Agda propositions.**
 
 ```agda
 left-id  : (idK ∘K f) a t ≡ f a t
 right-id : (f ∘K idK) a t ≡ f a t
 ```
 
-These are the homomorphism equations for `Category` written as literal `≡`
-propositions.  Both proofs are `refl` — the equations hold *definitionally*,
-not just propositionally.  This is the strongest form of the homomorphism: the
-implementation simply *is* the law.
+These are the Kleisli category laws written as literal `≡` propositions.
+Both proofs proceed by case analysis on `f a t` and then `refl` in each case —
+the equations hold *definitionally* within each branch.
 
 **Summary table:**
 
 | Location | Operation | Homomorphism equation |
 |---|---|---|
-| §2 line 48 | `return` | `⟦ return a ⟧ t = just (a, t)` |
-| §2 line 51 | `bind` | `⟦ m >>= f ⟧ = ⟦m⟧ >>= ⟦f⟧` with tel threading |
-| §3 line 77 | `⇒` type | `⟦ A ⇒ B ⟧ = ⟦A⟧ →K ⟦B⟧` |
-| §8 line 207 | `id` (left) | `⟦ id ∘ f ⟧ ≡ idK ∘K ⟦f⟧` |
-| §8 line 214 | `id` (right) | `⟦ f ∘ id ⟧ ≡ ⟦f⟧ ∘K idK` |
+| §2 | `return` | `⟦ return a ⟧ t = just (a, t)` |
+| §2 | `bind` | `⟦ m >>= f ⟧ = ⟦m⟧ >>= ⟦f⟧` with tel threading |
+| §3 | `⇒` type | `⟦ A ⇒ B ⟧ = ⟦A⟧ →K ⟦B⟧` |
+| §8 | `id` (left) | `⟦ id ∘ f ⟧ ≡ idK ∘K ⟦f⟧` |
+| §8 | `id` (right) | `⟦ f ∘ id ⟧ ≡ ⟦f⟧ ∘K idK` |
 
 §2 and §3 are where the **derivation** happens (calculate what operations must
-be); §8 is where the **verification** happens (prove the equations hold).  If
-the derivation is correct, verification is trivial — and it is: both proofs
-are `refl`.
+be); §8 is where the **verification** happens (prove the equations hold).
 
 **Step 4 — laws for free.**
 Monad laws (left/right identity, associativity) hold on `TelM` because they
-hold on `StateT Tel Maybe`.  Proved in the Agda file (§8) as single-line
-`refl` proofs.
+hold on `StateT Tel Maybe`.  The Kleisli category laws are proved in §8, and
+the full lawful category instance (including associativity and congruence) is
+assembled in §9f.
 
 ---
 
@@ -244,6 +235,10 @@ Every unfolding calls `step`, consuming 1 tel.  Agda accepts this via the
 argument (the fuel), which decreases by 1 on every call.  The fuel is tied to
 the computational tel so the bound is tight.
 
+There is also `fix` (§5), the special case where input and output types are
+the same (`S = R`), which does not call `step` internally — the body is
+expected to include its own `step` calls.
+
 ### Totality theorem
 
 `TelM A = Tel → Maybe (A × Tel)` is a **total** Agda function.  There is no
@@ -285,23 +280,17 @@ Unfolding:
                                else  z v
 ```
 
-This is **not a new primitive**.  It is `fixT` with a guard, defined entirely
-within the category:
+This is **not a new primitive**.  It is `fixT` with a guard.  In the Agda
+code, this pattern is expressed directly using `fixT` with an inline
+conditional rather than a separate combinator:
 
 ```agda
-limited : {S R : Set}
-        → (S →K Bool)              -- x : test
-        → ((S →K R) → S →K R)     -- y : body
-        → (S →K R)                 -- z : base
-        → S →K R
-limited test body base =
-  fixT (λ recur s →
-    bind-tel (test s) (λ b →
-      if b then body recur s
-           else base s))
+fixT (λ recur s →
+  if test s then body recur s
+            else base s)
 ```
 
-### Examples from the standard library
+### Examples from the Telomare standard library
 
 ```
 -- d2c (data-to-Church numeral)
@@ -330,33 +319,49 @@ In each case:
 
 ---
 
-## Fibonacci: a worked example
+## Fibonacci: two implementations
 
-Fibonacci is implemented as iterative accumulation using `limited`:
+The Agda file contains two fibonacci implementations that compute the same
+values, demonstrating the full pipeline at different levels.
+
+### §11 — Object-language fibonacci (syntax → ⟦\_⟧ → run)
+
+Written entirely in the syntax category `_⇨S_` using point-free categorical
+combinators, then denoted into the Kleisli category via `⟦_⟧` and executed.
+This is the full pipeline:
 
 ```
-State S = (counter, a, b)   where a = fib(k), b = fib(k+1)
-Result R = ℕ
-Initial state: (n, 0, 1)
-
-x = \s -> counter ≠ 0           -- keep going
-y = \recur (cnt, a, b) ->
-      recur (cnt-1, b, a+b)     -- one Fibonacci step
-z = \(_, a, _) -> a             -- return accumulated value
+syntax term  ─⟦_⟧─▸  Kleisli morphism  ─run─▸  Result
 ```
 
-In Agda:
+The code defines `fibS : nat ⇨S nat` as a composition of `fixTS` with an
+initial-state setup morphism.  The point-free style is verbose — this is
+exactly what "Compiling to Categories" (Elliott, ICFP 2017) automates away.
+
+### §12 — Semantic-domain fibonacci (direct Kleisli)
+
+The same computation written directly as a Kleisli morphism, bypassing the
+syntax category.  Much shorter, but without the machine-checked homomorphism:
 
 ```agda
+FibState = ℕ × ℕ × ℕ    -- (counter, a = fib_k, b = fib_{k+1})
+
 fib : ℕ →K ℕ
-fib n = limited {S = FibState} {R = ℕ}
-          (λ s → return-tel (isNonZero (proj₁ s)))
+fib n = fixT {S = FibState} {R = ℕ}
           (λ recur s →
-            let cnt = proj₁ s ; a = proj₁ (proj₂ s) ; b = proj₂ (proj₂ s)
-            in recur (predℕ cnt , b , a + b))
-          (λ s → return-tel (proj₁ (proj₂ s)))
+            let cnt = proj₁ s
+                a   = proj₁ (proj₂ s)
+                b   = proj₂ (proj₂ s)
+            in if isNonZero cnt
+                 then recur (predℕ cnt , b , a + b)
+                 else return-tel a)
           (n , 0 , 1)
 ```
+
+This is the `{x, y, z}` limited-recursion pattern expressed directly with
+`fixT` and an inline conditional.
+
+### Output
 
 Running with `tel = n + 2` (one spare):
 
@@ -373,7 +378,7 @@ fib( 8) = 21  [tel remaining: 1]
 fib( 9) = 34  [tel remaining: 1]
 fib(10) = 55  [tel remaining: 1]
 
-Out-of-tel: fib(10) with tel 5 → halted
+Out-of-tel: fib(10) with tel 5 → ?
 ```
 
 Tel consumed = `n + 1` exactly.  The telomere is a tight bound, not a loose one.
@@ -383,7 +388,7 @@ Tel consumed = `n + 1` exactly.  The telomere is a tight bound, not a loose one.
 ## Felix integration
 
 [Felix](https://github.com/conal/felix) is Conal Elliott's Agda library for
-categorical denotational design.  It provides four modules that `telomare.agda`
+categorical denotational design.  It provides the modules that `telomare.agda`
 imports:
 
 | Module | What it contributes |
@@ -406,7 +411,7 @@ record CategoryH (src tgt : Cat) where
     F-∘    : Fₘ (g ∘ f) ≈ Fₘ g ∘ Fₘ f  -- preserves composition
 ```
 
-Filling `⟦⟧-CategoryH` (§15g) makes the **TCM equations machine-checked**:
+Filling `⟦⟧-CategoryH` (§10g) makes the **TCM equations machine-checked**:
 Agda will reject any denotation function `⟦_⟧` that fails to be a functor
 from the syntax category `_⇨S_` into the Kleisli category `_→K_`.
 
@@ -416,110 +421,12 @@ Without Felix a proof obligation like `⟦ g ∘S f ⟧ = ⟦g⟧ ∘K ⟦f⟧` 
 informal convention.  With `CategoryH` it is a **type error** to violate it.
 Concretely:
 
-- `F-∘` holding by `refl` (§15g) means compositionality is **definitional**,
+- `F-∘` holding by `refl` (§10g) means compositionality is **definitional**,
   not just propositional — no proof term is needed.
 - `F-id` holding by `refl` means the identity axiom is also definitional.
-- `F-cong` (the inductive proof in `⟦⟧-cong`) ensures the denotation respects
-  the equational theory of the syntax category, closing the abstraction under
-  rewriting.
-
-### How Felix is provided in the Nix devShell
-
-Felix is fetched as a flake input (`github:conal/felix`) and pre-compiled into
-a dedicated Nix derivation (`felix-compiled`).  The derivation compiles
-`Felix/Homomorphism.agda` (which transitively covers all modules used here)
-from the derivation's own output path, so that the paths baked into the
-`.agdai` interface files match their installed location.  The `agda` wrapper
-in the devShell is then built with `symlinkJoin` + `makeWrapper` to prepend
-`-i ${felixCompiled}/src` to every `agda` invocation — no manual `-i` flag is
-ever needed.
-
----
-
-## Spacemacs setup
-
-Interactive Agda editing in Spacemacs relies on three pieces:
-
-1. **direnv** activates the project's Nix devShell automatically when a file
-   in the repo is opened.
-2. The devShell provides the wrapped `agda` binary (with felix pre-compiled in)
-   and the `agda-mode` binary.
-3. A hook in `~/.spacemacs` defers to the devShell's `agda-mode` instead of
-   any globally-installed one.
-
-### Prerequisites
-
-- `direnv` installed and its emacs integration active
-  (`direnv-mode` or the `envrc` package loaded in Spacemacs).
-- No separate global `agda` or `agda-mode` install required — everything comes
-  from `nix develop`.
-
-### `.envrc`
-
-The project root contains:
-
-```bash
-use flake . -Lv
-```
-
-This tells direnv to activate `nix develop` when the directory is entered,
-exposing the devShell's `agda`, `agda-mode`, and library paths.
-
-### Relevant `~/.spacemacs` snippet
-
-Add the following inside `dotspacemacs/user-config`:
-
-```elisp
-(defun my/maybe-activate-agda-mode ()
-  "Activate agda2-mode for Agda files using the project's direnv environment.
-Deferred via idle-timer. Derives the agda2.el path directly from the
-agda-mode binary path to avoid shell-command-to-string timing issues."
-  (when (and (buffer-file-name)
-             (string-match-p "\\.l?agda\\(?:\\.md\\)?\\'" (buffer-file-name))
-             (not (eq major-mode 'agda2-mode)))
-    (let ((buf (current-buffer)))
-      (run-with-idle-timer
-       0 nil
-       (lambda ()
-         (when (buffer-live-p buf)
-           (with-current-buffer buf
-             (ignore-errors (direnv-update-directory-environment default-directory))
-             (when (not (eq major-mode 'agda2-mode))
-               (let* ((agda-mode-bin (executable-find "agda-mode"))
-                      (agda2-el (when agda-mode-bin
-                                  (car (last
-                                        (seq-filter
-                                         (lambda (l) (string-suffix-p ".el" l))
-                                         (split-string
-                                          (shell-command-to-string
-                                           (concat agda-mode-bin " locate"))
-                                          "\n" t)))))))
-                 (if (and agda2-el (file-exists-p agda2-el))
-                     (progn
-                       (add-to-list 'load-path (file-name-directory agda2-el))
-                       (unless (featurep 'agda2-mode)
-                         (load-file agda2-el))
-                       (agda2-mode))
-                   (message "agda2-mode: locate failed (bin=%s locate=%s)"
-                            agda-mode-bin agda2-el)))))))))))
-
-(add-hook 'find-file-hook #'my/maybe-activate-agda-mode)
-```
-
-### How it works
-
-1. `find-file-hook` fires on every opened buffer.
-2. The hook checks the filename extension (`.agda`, `.lagda`, `.lagda.md`).
-3. An idle-timer defers the rest so it does not block file opening.
-4. `direnv-update-directory-environment` loads the devShell env for the
-   buffer's directory — making the devShell's `agda` and `agda-mode` first on
-   `PATH`.
-5. `agda-mode locate` returns the path to `agda2.el` from the devShell's
-   `agda-mode` binary.
-6. That `.el` file is loaded and `agda2-mode` is activated.
-
-No extra `agda2-program-args` are needed: the devShell's `agda` wrapper
-already embeds `-i ${felixCompiled}/src`, so `import Felix.*` just works.
+- `F-cong` (the inductive proof in `⟦⟧-cong`, §10f) ensures the denotation
+  respects the equational theory of the syntax category, closing the
+  abstraction under rewriting.
 
 ---
 
@@ -531,17 +438,15 @@ already embeds `-i ${felixCompiled}/src`, so `import Felix.*` just works.
 | §2 | Monad operations — `return-tel`, `bind-tel`, `step` |
 | §3 | Object language types and their denotations `⟦_⟧T` |
 | §4 | Kleisli category — `→K`, `idK`, `∘K`, `forkK`, `exlK`, `exrK` |
-| §5 | Recursion primitive — `fix`, `fixT` (fuel pattern) |
+| §5 | Recursion primitives — `fix`, `fixT` (fuel pattern) |
 | §6 | Complexity bounds |
 | §7 | Totality — `run`, `Result` |
-| §8 | TCM laws proved — left/right identity |
-| §9 | `limited` — denotation of `{x, y, z}` |
-| §10 | Examples — `d2c`, `isEven` |
-| §11 | Fibonacci — definition and runs |
-| §12 | Non-recursive examples — `addK`, `mulK` |
+| §8 | Kleisli category laws — `left-id`, `right-id` |
+| §9 | Felix integration — `→K-Equiv`, `→K-RawCat`, `→K-RawCart`, `→K-LawCat` |
+| §10 | Denotation homomorphism — `_⇨S_`, `_≈S_`, `⟦_⟧`, `⟦⟧-CategoryH` |
+| §11 | Object-language fibonacci — `fibS` (syntax → `⟦_⟧` → run) |
+| §12 | Semantic-domain fibonacci — `fib` (direct Kleisli) |
 | §13 | `main` — IO runner |
-| §14 | Felix lawful instances — `→K-Equiv`, `→K-RawCat`, `→K-LawCat` |
-| §15 | Denotation homomorphism — `_⇨S_`, `⟦_⟧`, `⟦⟧-CategoryH` |
 
 ---
 
