@@ -44,3 +44,121 @@ For mentoring, a typical getting started path looks something like the following
     If you want to quit, that's fine, but I prefer hearing so explicitly.
 
 You can find my email address near the bottom of my [home page](http://conal.net).
+
+## Setting up an Agda environment with Nix
+
+This repository provides a Nix flake that supplies Agda with the [standard library](https://github.com/agda/agda-stdlib) and [Felix](https://github.com/conal/felix) (Conal's categorical denotational design library) pre-compiled.
+The only prerequisite is [Nix](https://nixos.org/download/) with flakes enabled.
+
+### 1. Install Nix (if you don't have it)
+
+The recommended installer is [Determinate Nix](https://determinate.systems/nix-installer/), which already has flakes enabled — no extra configuration needed:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
+
+### 2. Enter the development shell
+
+From the repository root:
+
+```bash
+nix develop
+```
+
+This drops you into a shell with `agda` and `agda-mode` on your `PATH`, the standard library available, and [Felix](https://github.com/conal/felix) (Conal's Agda library for categorical denotational design) pre-compiled.
+You can now type-check or compile any Agda file in the repository, and `import Felix.*` works without any extra flags.
+
+### 3. Using direnv (recommended)
+
+[direnv](https://direnv.net/) activates the Nix devShell automatically when you `cd` into the project, so you don't have to run `nix develop` manually each time.
+
+Install direnv, then allow the project's `.envrc`:
+
+```bash
+direnv allow
+```
+
+From now on, entering the project directory will automatically load the Agda environment.
+
+## Setting up Emacs / Spacemacs for Agda
+
+Interactive Agda editing in Emacs/Spacemacs relies on three pieces:
+
+1. **direnv** activates the project's Nix devShell automatically when a file in the repo is opened.
+2. The devShell provides the wrapped `agda` binary (with Felix pre-compiled) and the `agda-mode` binary.
+3. A hook in your Emacs config defers to the devShell's `agda-mode` instead of any globally-installed one.
+
+### Prerequisites
+
+*   `direnv` installed and its Emacs integration active (`direnv-mode` or the `envrc` package).
+*   No separate global `agda` or `agda-mode` install is required — everything comes from the Nix devShell.
+
+### Spacemacs snippet
+
+Add the following inside `dotspacemacs/user-config` in your `~/.spacemacs`:
+
+```elisp
+(defun my/maybe-activate-agda-mode ()
+  "Activate agda2-mode for Agda files using the project's direnv environment.
+Deferred via idle-timer. Derives the agda2.el path directly from the
+agda-mode binary path to avoid shell-command-to-string timing issues."
+  (when (and (buffer-file-name)
+             (string-match-p "\\.l?agda\\(?:\\.md\\)?\\'" (buffer-file-name))
+             (not (eq major-mode 'agda2-mode)))
+    (let ((buf (current-buffer)))
+      (run-with-idle-timer
+       0 nil
+       (lambda ()
+         (when (buffer-live-p buf)
+           (with-current-buffer buf
+             (ignore-errors (direnv-update-directory-environment default-directory))
+             (when (not (eq major-mode 'agda2-mode))
+               (let* ((agda-mode-bin (executable-find "agda-mode"))
+                      (agda2-el (when agda-mode-bin
+                                  (car (last
+                                        (seq-filter
+                                         (lambda (l) (string-suffix-p ".el" l))
+                                         (split-string
+                                          (shell-command-to-string
+                                           (concat agda-mode-bin " locate"))
+                                          "\n" t)))))))
+                 (if (and agda2-el (file-exists-p agda2-el))
+                     (progn
+                       (add-to-list 'load-path (file-name-directory agda2-el))
+                       (unless (featurep 'agda2-mode)
+                         (load-file agda2-el))
+                       (agda2-mode))
+                   (message "agda2-mode: locate failed (bin=%s locate=%s)"
+                            agda-mode-bin agda2-el)))))))))))
+
+(add-hook 'find-file-hook #'my/maybe-activate-agda-mode)
+```
+
+Once this is in place, opening any `.agda` file in the repository will automatically activate `agda2-mode` with the correct environment.
+You can then load and type-check the file with `C-c C-l`.
+
+## Running the limited-recursion example
+
+The `limited-recursion/` directory contains `telomare.agda`, a denotational specification of Telomare's semantics following Conal's Denotational Design methodology.
+See [limited-recursion/README.md](limited-recursion/README.md) for a detailed explanation.
+
+### Compile and run from the devShell
+
+```bash
+nix develop            # or let direnv do it
+agda --compile limited-recursion/telomare.agda
+./limited-recursion/telomare
+```
+
+### Build and run with Nix directly (no devShell needed)
+
+```bash
+nix run                # builds and runs the limited-recursion example
+```
+
+### Run the checks
+
+```bash
+nix flake check        # verifies fibonacci output matches expected
+```

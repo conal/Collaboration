@@ -1,0 +1,13 @@
+# direnv
+.direnv/
+
+# Agda build artifacts
+*.agdai
+MAlonzo/
+
+# Nix
+result
+result-*
+
+# Draft (personal)
+email-draft-to-conal.md
